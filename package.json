@@ -1,0 +1,16 @@
+{
+  "name": "modding-tree-app",
+  "version": "1.0.0",
+  "description": "The Modding Tree - desktop app",
+  "main": "main.js",
+  "author": "The Modding Tree",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . \"The Modding Tree\" --platform=win32 --arch=x64 --out=dist --overwrite --asar"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-packager": "^17.1.2"
+  }
+}

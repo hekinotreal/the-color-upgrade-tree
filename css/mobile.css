@@ -1,0 +1,150 @@
+/* Mobile support */
+* {
+	-webkit-tap-highlight-color: transparent;
+}
+
+@media screen and (max-width: 820px) {
+
+	button, .can {
+		touch-action: manipulation;
+	}
+
+	/* Tree nodes */
+	.treeNode {
+		height: 60px;
+		width: 60px;
+		font-size: 24px;
+		margin: 0 4px 0 4px;
+	}
+
+	.treeButton {
+		height: 60px;
+		width: 60px;
+		font-size: 24px;
+		margin: 0 4px 0 4px;
+	}
+
+	.smallNode {
+		height: 40px;
+		width: 40px;
+		font-size: 18px;
+	}
+
+	.hidden {
+		height: 30px !important;
+	}
+
+	/* Prestige button */
+	.reset {
+		height: 90px;
+		width: 150px;
+		border-radius: 20px;
+		font-size: 12px;
+	}
+
+	/* Tab buttons */
+	.tabButton {
+		font-size: 15px;
+		padding: 3px 12px;
+		margin: 3px;
+	}
+
+	/* Upgrades/buyables/etc */
+	.upg {
+		min-height: 90px;
+		width: 90px;
+		font-size: 8px;
+	}
+
+	.upgBig {
+		height: 140px;
+		width: 140px;
+	}
+
+	.buyable {
+		height: 140px;
+		width: 140px;
+		font-size: 8px;
+	}
+
+	.achievement {
+		height: 70px;
+		width: 70px;
+	}
+
+	.milestone, .milestoneDone {
+		min-width: 95px;
+		height: 65px;
+	}
+
+	.challenge {
+		width: 230px;
+		height: 230px;
+		font-size: 13px;
+	}
+
+	.tile {
+		height: 65px;
+		width: 65px;
+	}
+
+	.longUpg {
+		height: 40px;
+		width: 100px;
+	}
+
+	.smallUpg {
+		height: 34px;
+		width: 34px;
+	}
+
+	/* Tooltips */
+	.tooltip {
+		width: 130px;
+		font-size: 12px;
+	}
+
+	/* Popups */
+	.popup-container {
+		right: 5px;
+		left: 5px;
+		width: auto;
+	}
+
+	.popup {
+		width: 100%;
+		font-size: 12px;
+	}
+
+	/* Headings */
+	h1 {
+		font-size: 20px;
+	}
+
+	h2 {
+		font-size: 16px;
+	}
+
+	h3 {
+		font-size: 13px;
+	}
+
+	/* Header things */
+	.back, .other-back {
+		font-size: 30px;
+	}
+
+	.sideLayers {
+		right: 10px;
+	}
+
+	/* Panes always fill the screen */
+	.col {
+		width: 100%;
+		min-width: 100%;
+	}
+
+	#app {
+		column-count: 1;
+	}
+}
