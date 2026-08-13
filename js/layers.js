@@ -433,10 +433,11 @@ addLayer("yellow", {
         let gain = player.amber.points.div('1e24').max(1).times('1e315').floor().max(1).pow(buyableEffect(this.layer, 12))
         let cap = new Decimal('1e20000000')
         let power = 0.15
-        if (hasUpgrade('chartreuse', 15) || hasUpgrade('chartreuse', 21)) {
+        if (hasUpgrade('chartreuse', 11) || hasUpgrade('chartreuse', 15) || hasUpgrade('chartreuse', 21)) {
+            if (hasUpgrade('chartreuse', 11)) gain = gain.pow(10)
             if (hasUpgrade('chartreuse', 15)) gain = gain.pow(100)
             if (hasUpgrade('chartreuse', 21)) gain = gain.pow(1000)
-            cap = hasUpgrade('chartreuse', 21) ? new Decimal('1e1000000000000') : new Decimal('1e1000000000')
+            cap = hasUpgrade('chartreuse', 21) ? new Decimal('1e1000000000000') : hasUpgrade('chartreuse', 15) ? new Decimal('1e1000000000') : new Decimal('1e100000000')
             power = 0.0015
         }
         return softcap(gain, cap, power).div(10)
@@ -601,7 +602,7 @@ addLayer("chartreuse", {
     upgrades: {
         11: {
             title: "Endgame v0.2",
-            description: "Points gain is raised to the 100th power (^100).",
+            description: "Points gain is raised to the 100th power (^100), and yellow gain is raised to the 10th power (^10).",
             cost: new Decimal('1e6000000'),
             effect() {
                 return new Decimal(100)
