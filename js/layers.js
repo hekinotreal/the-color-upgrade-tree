@@ -44,6 +44,11 @@ addLayer("red", {
         return mult
     },
     gainExp() {
+        let gainExp = new Decimal(1)
+        if (hasUpgrade('chartreuse', 12)) gainExp = gainExp.times(100)
+        if (hasUpgrade('chartreuse', 24)) gainExp = gainExp.times(500)
+        if (hasUpgrade('chartreuse', 18)) gainExp = gainExp.times(1000)
+        if (gainExp.gt(1)) return gainExp
         return hasUpgrade('yellow', 11) ? new Decimal(1.05) : new Decimal(1)
     },
     passiveGeneration() {
@@ -133,7 +138,11 @@ addLayer("orange", {
     baseResource: "red",
     baseAmount() {return player.red.points},
     type: "static",
-    base: 10,
+    base() {
+        if (player.orange.points.gte('1e100')) return new Decimal(12)
+        if (hasUpgrade('chartreuse', 19)) return Decimal.pow(10, 1/3)
+        return hasUpgrade('chartreuse', 13) ? new Decimal(10).sqrt() : new Decimal(10)
+    },
     exponent: 1,
     gainMult() {
         let mult = new Decimal(0.1)
@@ -143,6 +152,18 @@ addLayer("orange", {
     },
     gainExp() {
         return new Decimal(1)
+    },
+    getResetGain() {
+        if (!this.canBuyMax() || player.red.points.lt('1e6')) return new Decimal(1)
+        let gain = player.red.points.div(new Decimal('1e6')).div(this.gainMult()).max(1).log(this.base()).times(this.gainExp())
+        if (player.orange.points.gte('1e100')) gain = softcap(gain, new Decimal('1e100'), 0.5)
+        return gain.floor().sub(player.orange.points).add(1).max(1)
+    },
+    getNextAt(canMax = false) {
+        let amt = player.orange.points
+        if (canMax) amt = amt.add(this.getResetGain())
+        if (player.orange.points.gte('1e100')) amt = amt.div(Decimal.pow(new Decimal('1e100'), 0.5)).pow(2)
+        return this.base().pow(amt).times(this.gainMult()).times(new Decimal('1e6')).max(new Decimal('1e6'))
     },
     canBuyMax() { return hasMilestone(this.layer, 2) },
     resetsNothing() { return hasUpgrade('amber', 16) || hasUpgrade('yellow', 12) },
@@ -251,6 +272,14 @@ addLayer("amber", {
         let base = player.orange.points.lt(30) ? new Decimal(0) : Decimal.pow(2, player.orange.points.sub(30).div(5).floor()).round()
         let gain = base.add(player.yellow.points.times(100))
         if (hasUpgrade('yellow', 13)) gain = gain.pow(2)
+        if (hasUpgrade('chartreuse', 14) || hasUpgrade('chartreuse', 23)) {
+            if (hasUpgrade('chartreuse', 14)) gain = gain.pow(100)
+            if (hasUpgrade('chartreuse', 23)) gain = gain.pow(1000)
+            const capL = hasUpgrade('chartreuse', 23) ? new Decimal('1e12') : new Decimal('1e9')
+            const rawL = gain.log10()
+            if (rawL.gt(capL)) gain = Decimal.pow(10, capL.add(rawL.sub(capL).add(1).log10()))
+            return gain.div(10)
+        }
         return softcap(gain, new Decimal('1e20000000'), 0.15).div(10)
     },
     passiveGeneration() {
@@ -402,7 +431,15 @@ addLayer("yellow", {
     },
     getResetGain() {
         let gain = player.amber.points.div('1e24').max(1).times('1e315').floor().max(1).pow(buyableEffect(this.layer, 12))
-        return softcap(gain, new Decimal('1e20000000'), 0.15).div(10)
+        let cap = new Decimal('1e20000000')
+        let power = 0.15
+        if (hasUpgrade('chartreuse', 15) || hasUpgrade('chartreuse', 21)) {
+            if (hasUpgrade('chartreuse', 15)) gain = gain.pow(100)
+            if (hasUpgrade('chartreuse', 21)) gain = gain.pow(1000)
+            cap = hasUpgrade('chartreuse', 21) ? new Decimal('1e1000000000000') : new Decimal('1e1000000000')
+            power = 0.0015
+        }
+        return softcap(gain, cap, power).div(10)
     },
     getNextAt(canMax) {
         return new Decimal('1e24')
@@ -556,7 +593,8 @@ addLayer("chartreuse", {
         return new Decimal(0.1)
     },
     gainExp() {
-        return new Decimal(1)
+        if (hasUpgrade('chartreuse', 22)) return hasUpgrade('chartreuse', 16) ? new Decimal(100000) : new Decimal(1000)
+        return hasUpgrade('chartreuse', 16) ? new Decimal(100) : new Decimal(1)
     },
     row: 4,
     layerShown() { return hasUpgrade('yellow', 14) || player[this.layer].points.gt(0) },
@@ -572,5 +610,100 @@ addLayer("chartreuse", {
                 return "Currently " + format(this.effect()) + "x points exponent"
             },
         },
+        12: {
+            title: "Red to the 100th",
+            description: "Red gain is raised to the 100th power (^100).",
+            cost: new Decimal('1e7000000'),
+        },
+        13: {
+            title: "Logging the Orange Cost",
+            description: "Orange costs grow with log100 instead of log10, making each orange much cheaper.",
+            cost: new Decimal('1e8000000'),
+        },
+        14: {
+            title: "Amber to the 100th",
+            description: "Amber gain is raised to the 100th power (^100).",
+            cost: new Decimal('1e9000000'),
+        },
+        15: {
+            title: "Yellow to the 100th",
+            description: "Yellow gain is raised to the 100th power (^100).",
+            cost: new Decimal('1e10000000'),
+        },
+        16: {
+            title: "Chartreuse to the 100th",
+            description: "Chartreuse gain is raised to the 100th power (^100).",
+            cost: new Decimal('1e11000000'),
+        },
+        17: {
+            title: "Endgame v1.0",
+            description: "Points gain is raised to the 1000th power (^1000).",
+            cost: new Decimal('1e12000000'),
+            effect() {
+                return new Decimal(1000)
+            },
+            effectDisplay() {
+                return "Currently " + format(this.effect()) + "x points exponent"
+            },
+        },
+        18: {
+            title: "To the 1000th!",
+            description: "Red gain is raised to the 1000th power (^1000).",
+            cost: new Decimal('1e13000000'),
+        },
+        19: {
+            title: "Log 1000",
+            description: "Orange grows log1000 instead of log100.",
+            cost: new Decimal('1e14000000'),
+        },
+        23: {
+            title: "Amber Annihilation",
+            description: "Amber gain is raised to the 1000th power (^1000).",
+            cost: new Decimal('1e15000000'),
+        },
+        21: {
+            title: "Yellow Peril",
+            description: "Yellow gain is raised to the 1000th power (^1000).",
+            cost: new Decimal('1e16000000'),
+        },
+        22: {
+            title: "Chartreuse Supreme",
+            description: "Chartreuse gain is raised to the 1000th power (^1000).",
+            cost: new Decimal('1e17000000'),
+        },
+        24: {
+            title: "Red to the 500th",
+            description: "Red gain is raised to the 500th power (^500), and unlocks the lime layer.",
+            cost: new Decimal('1e18000000'),
+        },
     },
+})
+
+addLayer("lime", {
+    name: "Lime",
+    symbol: "L",
+    position: 0,
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+    }},
+    color: "#32CD32",
+    requires: new Decimal('1e100000000000'),
+    resource: "lime",
+    baseResource: "chartreuse",
+    baseAmount() {return player.chartreuse.points},
+    type: "static",
+    base() {
+        return new Decimal(10)
+    },
+    exponent: 1,
+    gainMult() {
+        return new Decimal(1)
+    },
+    gainExp() {
+        return new Decimal(1)
+    },
+    canBuyMax: true,
+    row: 5,
+    layerShown() { return hasUpgrade('chartreuse', 24) || player.chartreuse.points.gte('1e100000000000') || player.lime.points.gt(0) },
 })

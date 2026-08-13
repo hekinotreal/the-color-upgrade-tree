@@ -65,6 +65,7 @@ function getPointGen() {
 	if (player.yellow.buyables[11].gt(0)) gain = gain.pow(buyableEffect("yellow", 11))
 	if (player.yellow.buyables[13].gt(0)) gain = gain.pow(buyableEffect("yellow", 13))
 	if (hasUpgrade("chartreuse", 11)) gain = gain.pow(upgradeEffect("chartreuse", 11))
+	if (hasUpgrade("chartreuse", 17)) gain = gain.pow(upgradeEffect("chartreuse", 17))
 	return softcap(gain, new Decimal('1e20000000'), 0.15).times(100)
 }
 
@@ -98,10 +99,10 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
-	if (player.yellow.points.gt('1e20000000')) player.yellow.points = new Decimal('1e20000000')
-	if (player.amber.points.gt('1e20000000')) player.amber.points = new Decimal('1e20000000')
-	if (player.orange.points.gt('1e20000000')) player.orange.points = new Decimal('1e20000000')
-	if (player.red.points.gt('1e20000000')) player.red.points = new Decimal('1e20000000')
-	if (player.chartreuse.points.gt('1e20000000')) player.chartreuse.points = new Decimal('1e20000000')
-	if (player.points.gt('1e20000000')) player.points = new Decimal('1e20000000')
+	if (player.yellow.points.gt('1e100000000000000000000')) player.yellow.points = new Decimal('1e100000000000000000000')
+	if (player.amber.points.gt('1e100000000000000000000')) player.amber.points = new Decimal('1e100000000000000000000')
+	if (player.orange.points.gt('1e100000000000000000000')) player.orange.points = new Decimal('1e100000000000000000000')
+	if (player.red.points.gt('1e100000000000000000000')) player.red.points = new Decimal('1e100000000000000000000')
+	if (player.chartreuse.points.gt('1e100000000000000000000')) player.chartreuse.points = new Decimal('1e100000000000000000000')
+	if (player.points.gt('1e100000000000000000000')) player.points = new Decimal('1e100000000000000000000')
 }
