@@ -560,4 +560,17 @@ addLayer("chartreuse", {
     },
     row: 4,
     layerShown() { return hasUpgrade('yellow', 14) || player[this.layer].points.gt(0) },
+    upgrades: {
+        11: {
+            title: "Endgame v0.2",
+            description: "Points gain is raised to the 100th power (^100).",
+            cost: new Decimal('1e6000000'),
+            effect() {
+                return new Decimal(100)
+            },
+            effectDisplay() {
+                return "Currently " + format(this.effect()) + "x points exponent"
+            },
+        },
+    },
 })

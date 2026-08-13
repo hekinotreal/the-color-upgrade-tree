@@ -64,6 +64,7 @@ function getPointGen() {
 	if (hasUpgrade("amber", 20)) gain = gain.times(upgradeEffect("amber", 20))
 	if (player.yellow.buyables[11].gt(0)) gain = gain.pow(buyableEffect("yellow", 11))
 	if (player.yellow.buyables[13].gt(0)) gain = gain.pow(buyableEffect("yellow", 13))
+	if (hasUpgrade("chartreuse", 11)) gain = gain.pow(upgradeEffect("chartreuse", 11))
 	return softcap(gain, new Decimal('1e20000000'), 0.15).div(10)
 }
 
