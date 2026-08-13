@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
-	name: "softcap fixes inflation",
+	num: "0.3",
+	name: "amber upgrades visible",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
