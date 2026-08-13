@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "added yellow and stuff",
+	num: "0.2",
+	name: "softcap fixes inflation",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -64,7 +64,7 @@ function getPointGen() {
 	if (hasUpgrade("amber", 20)) gain = gain.times(upgradeEffect("amber", 20))
 	if (player.yellow.buyables[11].gt(0)) gain = gain.pow(buyableEffect("yellow", 11))
 	if (player.yellow.buyables[13].gt(0)) gain = gain.pow(buyableEffect("yellow", 13))
-	return softcap(gain, new Decimal('1e20000000'), 0.5)
+	return softcap(gain, new Decimal('1e20000000'), 0.15)
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -97,4 +97,10 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+	if (player.yellow.points.gt('1e20000000')) player.yellow.points = new Decimal('1e20000000')
+	if (player.amber.points.gt('1e20000000')) player.amber.points = new Decimal('1e20000000')
+	if (player.orange.points.gt('1e20000000')) player.orange.points = new Decimal('1e20000000')
+	if (player.red.points.gt('1e20000000')) player.red.points = new Decimal('1e20000000')
+	if (player.chartreuse.points.gt('1e20000000')) player.chartreuse.points = new Decimal('1e20000000')
+	if (player.points.gt('1e20000000')) player.points = new Decimal('1e20000000')
 }

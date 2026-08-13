@@ -39,7 +39,7 @@ addLayer("red", {
         if (hasUpgrade('amber', 18)) mult = mult.times(upgradeEffect('amber', 18))
         if (hasUpgrade('amber', 19)) mult = mult.times(upgradeEffect('amber', 19))
         if (hasUpgrade('amber', 20)) mult = mult.times(upgradeEffect('amber', 20))
-        mult = softcap(mult.pow(buyableEffect('yellow', 13)), new Decimal('1e20000000'), 0.5)
+        mult = softcap(mult.pow(buyableEffect('yellow', 13)), new Decimal('1e20000000'), 0.15)
         if (hasUpgrade('orange', 11)) mult = mult.div(100)
         return mult
     },
@@ -251,7 +251,7 @@ addLayer("amber", {
         let base = player.orange.points.lt(30) ? new Decimal(0) : Decimal.pow(2, player.orange.points.sub(30).div(5).floor()).round()
         let gain = base.add(player.yellow.points.times(100))
         if (hasUpgrade('yellow', 13)) gain = gain.pow(2)
-        return softcap(gain, new Decimal('1e20000000'), 0.5)
+        return softcap(gain, new Decimal('1e20000000'), 0.15)
     },
     passiveGeneration() {
         return hasUpgrade('yellow', 12) ? 1 : 0
@@ -402,7 +402,7 @@ addLayer("yellow", {
     },
     getResetGain() {
         let gain = player.amber.points.div('1e24').max(1).times('1e315').floor().max(1).pow(buyableEffect(this.layer, 12))
-        return softcap(gain, new Decimal('1e20000000'), 0.5)
+        return softcap(gain, new Decimal('1e20000000'), 0.15)
     },
     getNextAt(canMax) {
         return new Decimal('1e24')
@@ -550,6 +550,8 @@ addLayer("chartreuse", {
     baseAmount() {return player.yellow.points},
     type: "normal",
     exponent: 1,
+    softcap: new Decimal('1e20000000'),
+    softcapPower: new Decimal(0.15),
     gainMult() {
         return new Decimal(1)
     },
