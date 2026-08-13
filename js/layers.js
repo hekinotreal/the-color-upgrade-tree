@@ -39,15 +39,20 @@ addLayer("red", {
         if (hasUpgrade('amber', 18)) mult = mult.times(upgradeEffect('amber', 18))
         if (hasUpgrade('amber', 19)) mult = mult.times(upgradeEffect('amber', 19))
         if (hasUpgrade('amber', 20)) mult = mult.times(upgradeEffect('amber', 20))
-        mult = mult.times(getYellowMult('red'))
+        mult = mult.pow(buyableEffect('yellow', 13))
         if (hasUpgrade('orange', 11)) mult = mult.div(100)
         return mult
     },
     gainExp() {
-        return new Decimal(1)
+        return hasUpgrade('yellow', 11) ? new Decimal(1.05) : new Decimal(1)
     },
     passiveGeneration() {
-        return (hasUpgrade('amber', 17) || hasMilestone('orange', 1)) ? 1 : 0
+        return (hasUpgrade('amber', 17) || hasMilestone('orange', 1) || hasUpgrade('yellow', 11)) ? 1 : 0
+    },
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row <= this.row) return
+        if (hasUpgrade('yellow', 11)) layerDataReset(this.layer, ['upgrades'])
+        else layerDataReset(this.layer)
     },
     row: 0,
     hotkeys: [
@@ -90,12 +95,11 @@ addLayer("red", {
         },
         14: {
             title: "Red Fuel",
-            description: "Red boosts points based on log2(red), up to 100x. Yellow boosts this to 1e10000x per yellow.",
+            description: "Red boosts points based on log2(red).",
             cost: new Decimal(1000),
             effect() {
                 let red = player[this.layer].points
-                let base = red.lte(1) ? new Decimal(1) : red.log(2).min(100)
-                return base.times(Decimal.pow('1e10000', player.yellow.points))
+                return red.lte(1) ? new Decimal(1) : red.log(2)
             },
             effectDisplay() {
                 return "Currently " + format(this.effect()) + "x points"
@@ -135,14 +139,13 @@ addLayer("orange", {
         let mult = new Decimal(1)
         if (hasMilestone(this.layer, 5)) mult = mult.times(2)
         if (hasUpgrade('amber', 18)) mult = mult.times(2)
-        mult = mult.times(getYellowMult('orange'))
         return mult
     },
     gainExp() {
         return new Decimal(1)
     },
     canBuyMax() { return hasMilestone(this.layer, 2) },
-    resetsNothing() { return hasUpgrade('amber', 16) },
+    resetsNothing() { return hasUpgrade('amber', 16) || hasUpgrade('yellow', 12) },
     row: 1,
     layerShown() { return hasUpgrade('red', 15) },
     hotkeys: [
@@ -239,14 +242,22 @@ addLayer("amber", {
     type: "normal",
     exponent: 1,
     gainMult() {
-        return getYellowMult('amber')
+        return new Decimal(1)
     },
     gainExp() {
-        return new Decimal(1)
+        return hasUpgrade('yellow', 11) ? new Decimal(1.05) : new Decimal(1)
     },
     getResetGain() {
         let base = player.orange.points.lt(30) ? new Decimal(0) : Decimal.pow(2, player.orange.points.sub(30).div(5).floor()).round()
-        return base.add(player.yellow.points.times(100))
+        let gain = base.add(player.yellow.points.times(100))
+        if (hasUpgrade('yellow', 13)) gain = gain.pow(2)
+        return gain
+    },
+    passiveGeneration() {
+        return hasUpgrade('yellow', 12) ? 1 : 0
+    },
+    resetsNothing() {
+        return hasUpgrade('yellow', 12)
     },
     row: 2,
     layerShown() { return player.orange.points.gte(30) || player.amber.points.gt(0) },
@@ -382,7 +393,6 @@ addLayer("yellow", {
     baseResource: "amber",
     baseAmount() {return player.amber.points},
     type: "static",
-    base: 1,
     exponent: 1,
     gainMult() {
         return new Decimal(1)
@@ -390,6 +400,161 @@ addLayer("yellow", {
     gainExp() {
         return new Decimal(1)
     },
+    getResetGain() {
+        return player.amber.points.div('1e24').max(1).times('1e315').floor().max(1).pow(buyableEffect(this.layer, 12))
+    },
+    getNextAt(canMax) {
+        return new Decimal('1e24')
+    },
+    canBuyMax: true,
     row: 3,
     layerShown() { return player.amber.points.gte('1e24') || player.yellow.points.gt(0) },
+    upgrades: {
+        11: {
+            title: "Unleashed",
+            description: "Red is generated passively, orange and orange upgrades are auto-bought, red upgrades are kept on yellow reset, and red and amber gain is boosted by ^1.05.",
+            cost: new Decimal(1),
+            unlocked() { return player[this.layer].unlocked },
+        },
+        12: {
+            title: "Finally dude",
+            description: "Amber is generated passively and auto-buys its upgrades, and orange and amber no longer reset anything.",
+            cost: new Decimal('1e234567'),
+        },
+        13: {
+            title: "Crazily good",
+            description: "Amber gain is raised to the 2nd power (^2).",
+            cost: new Decimal('1e10000000'),
+        },
+        14: {
+            title: "Chartreuse Unlock",
+            description: "Unlock a brand new layer: chartreuse! It resets everything before it.",
+            cost: new Decimal('1e20000000'),
+        },
+    },
+    buyables: {
+        11: {
+            title: "Buyables unleashed",
+            cost(x) {
+                return Decimal.pow(2, x).floor()
+            },
+            effect(x) {
+                return Decimal.pow(1.1, x)
+            },
+            display() {
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " yellow\nAmount: " + formatWhole(player[this.layer].buyables[this.id]) + "/100\nRaises points gain to the power of " + format(data.effect)
+            },
+            unlocked() { return player[this.layer].unlocked },
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)
+            },
+            buy() {
+                let cost = tmp[this.layer].buyables[this.id].cost
+                player[this.layer].points = player[this.layer].points.sub(cost)
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost)
+            },
+            buyMax() {
+                while (player[this.layer].points.gte(layers[this.layer].buyables[this.id].actualCostFunction(player[this.layer].buyables[this.id])) && player[this.layer].buyables[this.id].lt(this.purchaseLimit)) {
+                    let cost = layers[this.layer].buyables[this.id].actualCostFunction(player[this.layer].buyables[this.id])
+                    player[this.layer].points = player[this.layer].points.sub(cost)
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                    player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost)
+                }
+            },
+            purchaseLimit: new Decimal(100),
+            style: {'height': '222px'},
+        },
+        12: {
+            title: "yellow power already?",
+            cost(x) {
+                return new Decimal('1e5000').times(Decimal.pow(1.005, x))
+            },
+            effect(x) {
+                return Decimal.pow(1.00025, x)
+            },
+            display() {
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " yellow<br>Amount: " + formatWhole(getBuyableAmount(this.layer, this.id)) + "/10000<br>Yellow gain is raised to the power of " + format(data.effect)
+            },
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)
+            },
+            buy() {
+                let cost = tmp[this.layer].buyables[this.id].cost
+                player[this.layer].points = player[this.layer].points.sub(cost)
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            buyMax() {
+                while (player[this.layer].points.gte(layers[this.layer].buyables[this.id].actualCostFunction(getBuyableAmount(this.layer, this.id))) && getBuyableAmount(this.layer, this.id).lt(this.purchaseLimit)) {
+                    let cost = layers[this.layer].buyables[this.id].actualCostFunction(getBuyableAmount(this.layer, this.id))
+                    player[this.layer].points = player[this.layer].points.sub(cost)
+                    setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                }
+            },
+            purchaseLimit: new Decimal(10000),
+        },
+        13: {
+            title: "huge numbers",
+            cost(x) {
+                return new Decimal('1e1000000').times(Decimal.pow(1.1, x))
+            },
+            effect(x) {
+                return Decimal.pow(1.02, x)
+            },
+            display() {
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " yellow<br>Amount: " + formatWhole(getBuyableAmount(this.layer, this.id)) + "/100<br>Red and points gain is raised to the power of " + format(data.effect)
+            },
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)
+            },
+            buy() {
+                let cost = tmp[this.layer].buyables[this.id].cost
+                player[this.layer].points = player[this.layer].points.sub(cost)
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            buyMax() {
+                while (player[this.layer].points.gte(layers[this.layer].buyables[this.id].actualCostFunction(getBuyableAmount(this.layer, this.id))) && getBuyableAmount(this.layer, this.id).lt(this.purchaseLimit)) {
+                    let cost = layers[this.layer].buyables[this.id].actualCostFunction(getBuyableAmount(this.layer, this.id))
+                    player[this.layer].points = player[this.layer].points.sub(cost)
+                    setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                }
+            },
+            purchaseLimit: new Decimal(100),
+        },
+    },
+    update(diff) {
+        if (hasUpgrade(this.layer, 11)) {
+            if (canReset('orange')) doReset('orange')
+            autobuyUpgrades('orange')
+        }
+        if (hasUpgrade(this.layer, 12)) autobuyUpgrades('amber')
+    },
+})
+
+addLayer("chartreuse", {
+    name: "Chartreuse",
+    symbol: "C",
+    position: 0,
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+    }},
+    color: "#7FFF00",
+    requires: new Decimal('1e100000000'),
+    resource: "chartreuse",
+    baseResource: "yellow",
+    baseAmount() {return player.yellow.points},
+    type: "normal",
+    exponent: 1,
+    gainMult() {
+        return new Decimal(1)
+    },
+    gainExp() {
+        return new Decimal(1)
+    },
+    row: 4,
+    layerShown() { return hasUpgrade('yellow', 14) || player[this.layer].points.gt(0) },
 })

@@ -282,9 +282,10 @@ function loadVue() {
 				<tooltip v-if="tmp[layer].buyables[data].tooltip" :text="tmp[layer].buyables[data].tooltip"></tooltip>
 
 			</button>
-			<br v-if="(tmp[layer].buyables[data].sellOne !== undefined && !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne == false)) || (tmp[layer].buyables[data].sellAll && !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll == false))">
+			<br v-if="(tmp[layer].buyables[data].sellOne !== undefined && !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne == false)) || (tmp[layer].buyables[data].sellAll && !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll == false)) || layers[layer].buyables[data].buyMax">
 			<sell-one :layer="layer" :data="data" v-bind:style="tmp[layer].componentStyles['sell-one']" v-if="(tmp[layer].buyables[data].sellOne)&& !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne == false)"></sell-one>
 			<sell-all :layer="layer" :data="data" v-bind:style="tmp[layer].componentStyles['sell-all']" v-if="(tmp[layer].buyables[data].sellAll)&& !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll == false)"></sell-all>
+			<buy-max :layer="layer" :data="data" v-bind:style="tmp[layer].componentStyles['buy-max']" v-if="layers[layer].buyables[data].buyMax"></buy-max>
 		</div>
 		`,
 		data() { return { interval: false, time: 0,}},
@@ -594,6 +595,13 @@ function loadVue() {
 		template: `
 			<button v-if="tmp[layer].buyables && tmp[layer].buyables[data].sellAll && !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll == false)" v-on:click="run(tmp[layer].buyables[data].sellAll, tmp[layer].buyables[data])"
 				v-bind:class="{ longUpg: true, can: player[layer].unlocked, locked: !player[layer].unlocked }">{{tmp[layer].buyables.sellAllText ? tmp[layer].buyables.sellAllText : "Sell All"}}</button>
+	`
+	})
+	Vue.component('buy-max', {
+		props: ['layer', 'data'],
+		template: `
+			<button v-if="tmp[layer].buyables && tmp[layer].buyables[data] !== undefined && layers[layer].buyables[data].buyMax && !(tmp[layer].buyables[data].canBuyMax !== undefined && tmp[layer].buyables[data].canBuyMax == false)" v-on:click="buyMaxBuyable(layer, data)"
+				v-bind:class="{ longUpg: true, can: player[layer].unlocked, locked: !player[layer].unlocked }">{{tmp[layer].buyables.buyMaxText ? tmp[layer].buyables.buyMaxText : "Buy Max"}}</button>
 	`
 	})
 

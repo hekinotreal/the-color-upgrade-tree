@@ -62,17 +62,9 @@ function getPointGen() {
 	if (hasUpgrade("amber", 18)) gain = gain.times(upgradeEffect("amber", 18))
 	if (hasUpgrade("amber", 19)) gain = gain.times(upgradeEffect("amber", 19))
 	if (hasUpgrade("amber", 20)) gain = gain.times(upgradeEffect("amber", 20))
-	gain = gain.times(getYellowMult("points"))
+	if (player.yellow.buyables[11].gt(0)) gain = gain.pow(buyableEffect("yellow", 11))
+	if (player.yellow.buyables[13].gt(0)) gain = gain.pow(buyableEffect("yellow", 13))
 	return gain
-}
-
-// Yellow meta multipliers, based on how many yellow you own
-function getYellowMult(type) {
-	let y = player.yellow.points.max(0)
-	if (type === "points" || type === "red") return Decimal.pow(10, y.times(100)).min(new Decimal('1e1000'))
-	if (type === "orange") return Decimal.pow(2, y).min(200)
-	if (type === "amber") return Decimal.pow(500, y).min(10000)
-	return new Decimal(1)
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
