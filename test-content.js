@@ -115,6 +115,20 @@ app.whenReady().then(async () => {
       })()`)
       console.log(res8)
       await sleep(300)
+      const res8b = await win.webContents.executeJavaScript(`(function(){
+        const out = [];
+        const log = (s) => out.push(s);
+        try {
+          log('== Amber upgrade layout ==');
+          log('amber upgrades: ' + Object.keys(layers.amber.upgrades).filter(x=>!isNaN(x)).sort((a,b)=>a-b).join(','));
+          log('upg21: ' + layers.amber.upgrades[21].title + ' cost=' + layers.amber.upgrades[21].cost + ' effect=' + layers.amber.upgrades[21].effect());
+          log('upg22: ' + layers.amber.upgrades[22].title + ' cost=' + layers.amber.upgrades[22].cost + ' effect=' + layers.amber.upgrades[22].effect());
+          log('red gainMult src has hasUpgrade(amber,22): ' + layers.red.gainMult.toString().includes("hasUpgrade('amber', 22)"));
+          return out.join('\\n');
+        } catch(e) { return 'ERR8B: ' + e.message; }
+      })()`)
+      console.log(res8b)
+      await sleep(300)
       const res9 = await win.webContents.executeJavaScript(`(function(){
         const out = [];
         const log = (s) => out.push(s);

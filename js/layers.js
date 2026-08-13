@@ -38,7 +38,7 @@ addLayer("red", {
         if (hasUpgrade('amber', 17)) mult = mult.times(upgradeEffect('amber', 17))
         if (hasUpgrade('amber', 18)) mult = mult.times(upgradeEffect('amber', 18))
         if (hasUpgrade('amber', 19)) mult = mult.times(upgradeEffect('amber', 19))
-        if (hasUpgrade('amber', 20)) mult = mult.times(upgradeEffect('amber', 20))
+        if (hasUpgrade('amber', 22)) mult = mult.times(upgradeEffect('amber', 22))
         mult = softcap(mult.pow(buyableEffect('yellow', 13)), new Decimal('1e20000000'), 0.15)
         if (hasUpgrade('orange', 11)) mult = mult.div(100)
         return mult
@@ -391,17 +391,6 @@ addLayer("amber", {
                 return "Currently " + format(this.effect()) + "x red and points"
             },
         },
-        20: {
-            title: "fast scaling",
-            description: "Red and points gain are 1e200x higher.",
-            cost: new Decimal('1e15'),
-            effect() {
-                return new Decimal('1e200')
-            },
-            effectDisplay() {
-                return "Currently " + format(this.effect()) + "x red and points"
-            },
-        },
         21: {
             title: "Amber Rush",
             description: "Gain 10x more amber.",
@@ -411,6 +400,17 @@ addLayer("amber", {
             },
             effectDisplay() {
                 return "Currently " + format(this.effect()) + "x amber"
+            },
+        },
+        22: {
+            title: "fast scaling",
+            description: "Red and points gain are 1e200x higher.",
+            cost: new Decimal('1e15'),
+            effect() {
+                return new Decimal('1e200')
+            },
+            effectDisplay() {
+                return "Currently " + format(this.effect()) + "x red and points"
             },
         },
     },

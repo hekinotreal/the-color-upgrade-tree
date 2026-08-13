@@ -61,7 +61,7 @@ function getPointGen() {
 	if (hasUpgrade("amber", 17)) gain = gain.times(upgradeEffect("amber", 17))
 	if (hasUpgrade("amber", 18)) gain = gain.times(upgradeEffect("amber", 18))
 	if (hasUpgrade("amber", 19)) gain = gain.times(upgradeEffect("amber", 19))
-	if (hasUpgrade("amber", 20)) gain = gain.times(upgradeEffect("amber", 20))
+	if (hasUpgrade("amber", 22)) gain = gain.times(upgradeEffect("amber", 22))
 	if (player.yellow.buyables[11].gt(0)) gain = gain.pow(buyableEffect("yellow", 11))
 	if (player.yellow.buyables[13].gt(0)) gain = gain.pow(buyableEffect("yellow", 13))
 	if (hasUpgrade("chartreuse", 11)) gain = gain.pow(upgradeEffect("chartreuse", 11))
@@ -99,6 +99,10 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+	if (player.amber.upgrades && Array.isArray(player.amber.upgrades) && player.amber.upgrades.includes(20)) {
+		if (!player.amber.upgrades.includes(22)) player.amber.upgrades.push(22)
+		player.amber.upgrades = player.amber.upgrades.filter(x => x !== 20)
+	}
 	if (player.yellow.points.gt('1e100000000000000000000')) player.yellow.points = new Decimal('1e100000000000000000000')
 	if (player.amber.points.gt('1e100000000000000000000')) player.amber.points = new Decimal('1e100000000000000000000')
 	if (player.orange.points.gt('1e100000000000000000000')) player.orange.points = new Decimal('1e100000000000000000000')
