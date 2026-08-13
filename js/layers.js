@@ -278,9 +278,9 @@ addLayer("amber", {
             const capL = hasUpgrade('chartreuse', 23) ? new Decimal('1e12') : new Decimal('1e9')
             const rawL = gain.log10()
             if (rawL.gt(capL)) gain = Decimal.pow(10, capL.add(rawL.sub(capL).add(1).log10()))
-            return gain.div(10)
+            return gain.div(10).times(hasUpgrade(this.layer, 21) ? new Decimal(10) : new Decimal(1))
         }
-        return softcap(gain, new Decimal('1e20000000'), 0.15).div(10)
+        return softcap(gain, new Decimal('1e20000000'), 0.15).div(10).times(hasUpgrade(this.layer, 21) ? new Decimal(10) : new Decimal(1))
     },
     passiveGeneration() {
         return hasUpgrade('yellow', 12) ? 1 : 0
@@ -400,6 +400,17 @@ addLayer("amber", {
             },
             effectDisplay() {
                 return "Currently " + format(this.effect()) + "x red and points"
+            },
+        },
+        21: {
+            title: "Amber Rush",
+            description: "Gain 10x more amber.",
+            cost: new Decimal(0.5),
+            effect() {
+                return new Decimal(10)
+            },
+            effectDisplay() {
+                return "Currently " + format(this.effect()) + "x amber"
             },
         },
     },
