@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4",
-	name: "new amber upgrade",
+	num: "0.5",
+	name: "YOOO SO PEAK UPDATE",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -66,6 +66,7 @@ function getPointGen() {
 	if (player.yellow.buyables[13].gt(0)) gain = gain.pow(buyableEffect("yellow", 13))
 	if (hasUpgrade("chartreuse", 11)) gain = gain.pow(upgradeEffect("chartreuse", 11))
 	if (hasUpgrade("chartreuse", 17)) gain = gain.pow(upgradeEffect("chartreuse", 17))
+	if (hasUpgrade("chartreuse", 25)) gain = gain.pow(2)
 	return softcap(gain, new Decimal('1e20000000'), 0.15).times(100)
 }
 

@@ -48,6 +48,7 @@ addLayer("red", {
         if (hasUpgrade('chartreuse', 12)) gainExp = gainExp.times(100)
         if (hasUpgrade('chartreuse', 24)) gainExp = gainExp.times(500)
         if (hasUpgrade('chartreuse', 18)) gainExp = gainExp.times(1000)
+        if (hasUpgrade('chartreuse', 25)) gainExp = gainExp.times(2)
         if (gainExp.gt(1)) return gainExp
         return hasUpgrade('yellow', 11) ? new Decimal(1.05) : new Decimal(1)
     },
@@ -151,6 +152,7 @@ addLayer("orange", {
         return mult
     },
     gainExp() {
+        if (hasUpgrade('chartreuse', 25)) return new Decimal(2)
         return new Decimal(1)
     },
     getResetGain() {
@@ -272,6 +274,7 @@ addLayer("amber", {
         let base = player.orange.points.lt(30) ? new Decimal(0) : Decimal.pow(2, player.orange.points.sub(30).div(5).floor()).round()
         let gain = base.add(player.yellow.points.times(100))
         if (hasUpgrade('yellow', 13)) gain = gain.pow(2)
+        if (hasUpgrade('chartreuse', 25)) gain = gain.pow(2)
         if (hasUpgrade('chartreuse', 14) || hasUpgrade('chartreuse', 23)) {
             if (hasUpgrade('chartreuse', 14)) gain = gain.pow(100)
             if (hasUpgrade('chartreuse', 23)) gain = gain.pow(1000)
@@ -455,6 +458,7 @@ addLayer("yellow", {
         let gain = player.amber.points.div('1e24').max(1).times('1e315').floor().max(1).pow(buyableEffect(this.layer, 12))
         let cap = new Decimal('1e20000000')
         let power = 0.15
+        if (hasUpgrade('chartreuse', 25)) gain = gain.pow(2)
         if (hasUpgrade('chartreuse', 11) || hasUpgrade('chartreuse', 15) || hasUpgrade('chartreuse', 21)) {
             if (hasUpgrade('chartreuse', 11)) gain = gain.pow(10)
             if (hasUpgrade('chartreuse', 15)) gain = gain.pow(100)
@@ -616,8 +620,11 @@ addLayer("chartreuse", {
         return new Decimal(0.1)
     },
     gainExp() {
-        if (hasUpgrade('chartreuse', 22)) return hasUpgrade('chartreuse', 16) ? new Decimal(100000) : new Decimal(1000)
-        return hasUpgrade('chartreuse', 16) ? new Decimal(100) : new Decimal(1)
+        let gainExp = new Decimal(1)
+        if (hasUpgrade('chartreuse', 16)) gainExp = gainExp.times(100)
+        if (hasUpgrade('chartreuse', 22)) gainExp = gainExp.times(1000)
+        if (hasUpgrade('chartreuse', 25)) gainExp = gainExp.times(2)
+        return gainExp
     },
     row: 4,
     layerShown() { return hasUpgrade('yellow', 14) || player[this.layer].points.gt(0) },
@@ -698,6 +705,11 @@ addLayer("chartreuse", {
             title: "Red to the 500th",
             description: "Red gain is raised to the 500th power (^500), and unlocks the lime layer.",
             cost: new Decimal('1e18000000'),
+        },
+        25: {
+            title: "YOOO SO PEAK UPDATE",
+            description: "Points, red, orange, yellow, amber and chartreuse gain are raised to the 2nd power (^2).",
+            cost: new Decimal('1e4000000'),
         },
     },
 })
