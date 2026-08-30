@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.5",
-	name: "YOOO SO PEAK UPDATE",
+	num: "0.6",
+	name: "THE LIME UPDATE",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -67,6 +67,10 @@ function getPointGen() {
 	if (hasUpgrade("chartreuse", 11)) gain = gain.pow(upgradeEffect("chartreuse", 11))
 	if (hasUpgrade("chartreuse", 17)) gain = gain.pow(upgradeEffect("chartreuse", 17))
 	if (hasUpgrade("chartreuse", 25)) gain = gain.pow(2)
+	if (hasUpgrade("lime", 11)) gain = gain.pow(500)
+	if (hasUpgrade("lime", 12)) gain = gain.pow('1e6')
+	if (hasUpgrade("lime", 13)) gain = gain.pow('1e66')
+	if (hasUpgrade("lime", 14)) gain = gain.pow('1e5000')
 	return softcap(gain, new Decimal('1e20000000'), 0.15).times(100)
 }
 
