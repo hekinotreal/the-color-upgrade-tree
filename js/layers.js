@@ -180,7 +180,6 @@ addLayer("orange", {
         if (player.orange.points.gte('1e100')) amt = amt.div(Decimal.pow(new Decimal('1e100'), 0.5)).pow(2)
         return this.base().pow(amt).times(this.gainMult()).times(new Decimal('1e6')).max(new Decimal('1e6'))
     },
-    canBuyMax() { return hasMilestone(this.layer, 2) },
     resetsNothing() { return hasUpgrade('amber', 16) || hasUpgrade('yellow', 12) },
     row: 1,
     layerShown() { return hasUpgrade('red', 15) },
@@ -205,7 +204,7 @@ addLayer("orange", {
         2: {
             requirementDescription: "Very Fast Tree",
             effectDescription() {
-                return "Requires 5 orange. Points are 1000x more powerful, red gain is 1000x higher, red upgrades are auto-bought, and points boost red gain by log100(points) (up to 1e308x). Orange can be bulk-bought."
+                return "Requires 5 orange. Points are 1000x more powerful, red gain is 1000x higher, red upgrades are auto-bought, and points boost red gain by log100(points) (up to 1e308x)."
             },
             done() { return player[this.layer].points.gte(5) },
         },
