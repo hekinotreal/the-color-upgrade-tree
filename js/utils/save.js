@@ -135,11 +135,23 @@ function fixSave() {
 	defaultData = getStartPlayer();
 	fixData(defaultData, player);
 
+	function safeDecimal(v) {
+		// Guard against values from before the ExpantaNum port (break_eternity stored Decimal
+		// objects as {mag, layer, sign}); ExpantaNum can't parse those and would turn them NaN.
+		if (v !== null && typeof v === "object" && !(v instanceof Decimal) &&
+		    "layer" in v && "sign" in v && "mag" in v && !("array" in v)) {
+			return decimalZero;
+		}
+		let d = new Decimal(v);
+		if (d.isNaN()) return decimalZero;
+		return d;
+	}
+
 	for (layer in layers) {
 		if (player[layer].best !== undefined)
-			player[layer].best = new Decimal(player[layer].best);
+			player[layer].best = safeDecimal(player[layer].best);
 		if (player[layer].total !== undefined)
-			player[layer].total = new Decimal(player[layer].total);
+			player[layer].total = safeDecimal(player[layer].total);
 
 		if (layers[layer].tabFormat && !Array.isArray(layers[layer].tabFormat)) {
 
@@ -250,12 +262,14 @@ function NaNcheck(data) {
 			NaNcheck(data[item]);
 		}
 		else if (data[item] !== data[item] || checkDecimalNaN(data[item])) {
-			if (!NaNalert) {
-				clearInterval(interval);
-				NaNalert = true;
-				alert("Invalid value found in player, named '" + item + "'. Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
-				return
+			if (data[item] instanceof Decimal) {
+				data[item] = decimalZero;
+			} else if (typeof data[item] === "number") {
+				data[item] = 0;
+			} else {
+				data[item] = decimalZero;
 			}
+			console.warn("NaNcheck: repaired NaN value for '" + item + "'")
 		}
 		else if (data[item] instanceof Decimal) {
 		}
