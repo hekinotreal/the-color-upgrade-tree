@@ -826,7 +826,7 @@ addLayer("lime", {
         16: {
             title: "The Infinite Lime",
             description: "Points, red, orange, yellow, amber, chartreuse and lime gain are raised to the 10^(10^(10^50000))th power (^1e1e1e1e50000).",
-            cost: new Decimal('1e1e1e15000'),
+            cost: new Decimal('1e1e1e5000'),
             unlocked() { return hasUpgrade(this.layer, 15) },
         },
     },
