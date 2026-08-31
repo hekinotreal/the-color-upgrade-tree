@@ -784,7 +784,6 @@ addLayer("lime", {
             title: "Lime Overdrive",
             description: "Points, red, orange, yellow, amber, chartreuse and lime gain are raised to the 500th power (^500), and orange gain is 2x higher.",
             cost: new Decimal('1e99'),
-            unlocked() { return hasUpgrade('chartreuse', 24) },
         },
         12: {
             title: "Lime Supernova",
