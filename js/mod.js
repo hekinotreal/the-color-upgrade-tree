@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.63",
+	num: "0.64",
 	name: "THE LIME UPDATE",
 }
 
@@ -71,6 +71,8 @@ function getPointGen() {
 	if (hasUpgrade("lime", 12)) gain = gain.pow('1e6')
 	if (hasUpgrade("lime", 13)) gain = gain.pow('1e66')
 	if (hasUpgrade("lime", 14)) gain = gain.pow('1e5000')
+	if (hasUpgrade("lime", 15)) gain = gain.pow('1e1e5000')
+	if (hasUpgrade("lime", 16)) gain = gain.pow('1e1e1e1e50000')
 	return softcap(gain, new Decimal('1e20000000'), 0.15).times(100)
 }
 

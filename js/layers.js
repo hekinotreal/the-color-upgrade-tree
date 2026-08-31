@@ -53,6 +53,8 @@ addLayer("red", {
         if (hasUpgrade('lime', 12)) gainExp = gainExp.times('1e6')
         if (hasUpgrade('lime', 13)) gainExp = gainExp.times('1e66')
         if (hasUpgrade('lime', 14)) gainExp = gainExp.times('1e5000')
+        if (hasUpgrade('lime', 15)) gainExp = gainExp.times('1e1e5000')
+        if (hasUpgrade('lime', 16)) gainExp = gainExp.times('1e1e1e1e50000')
         if (gainExp.gt(1)) return gainExp
         return hasUpgrade('yellow', 11) ? new Decimal(1.05) : new Decimal(1)
     },
@@ -168,6 +170,8 @@ addLayer("orange", {
         if (hasUpgrade('lime', 12)) gain = gain.pow('1e6')
         if (hasUpgrade('lime', 13)) gain = gain.pow('1e66')
         if (hasUpgrade('lime', 14)) gain = gain.pow('1e5000')
+        if (hasUpgrade('lime', 15)) gain = gain.pow('1e1e5000')
+        if (hasUpgrade('lime', 16)) gain = gain.pow('1e1e1e1e50000')
         if (hasUpgrade('lime', 11)) gain = gain.times(2)
         if (hasUpgrade('lime', 12)) gain = gain.times(10)
         if (hasUpgrade('lime', 13)) gain = gain.times('1e12')
@@ -297,6 +301,8 @@ addLayer("amber", {
             if (hasUpgrade('lime', 12)) gain = gain.pow('1e6')
             if (hasUpgrade('lime', 13)) gain = gain.pow('1e66')
             if (hasUpgrade('lime', 14)) gain = gain.pow('1e5000')
+            if (hasUpgrade('lime', 15)) gain = gain.pow('1e1e5000')
+            if (hasUpgrade('lime', 16)) gain = gain.pow('1e1e1e1e50000')
             return gain.div(10).times(hasUpgrade(this.layer, 21) ? new Decimal(10) : new Decimal(1)).times(hasUpgrade(this.layer, 23) ? new Decimal(5) : new Decimal(1))
         }
         gain = softcap(gain, new Decimal('1e20000000'), 0.15)
@@ -304,6 +310,8 @@ addLayer("amber", {
         if (hasUpgrade('lime', 12)) gain = gain.pow('1e6')
         if (hasUpgrade('lime', 13)) gain = gain.pow('1e66')
         if (hasUpgrade('lime', 14)) gain = gain.pow('1e5000')
+        if (hasUpgrade('lime', 15)) gain = gain.pow('1e1e5000')
+        if (hasUpgrade('lime', 16)) gain = gain.pow('1e1e1e1e50000')
         return gain.div(10).times(hasUpgrade(this.layer, 21) ? new Decimal(10) : new Decimal(1)).times(hasUpgrade(this.layer, 23) ? new Decimal(5) : new Decimal(1))
     },
     passiveGeneration() {
@@ -491,6 +499,8 @@ addLayer("yellow", {
         if (hasUpgrade('lime', 12)) gain = gain.pow('1e6')
         if (hasUpgrade('lime', 13)) gain = gain.pow('1e66')
         if (hasUpgrade('lime', 14)) gain = gain.pow('1e5000')
+        if (hasUpgrade('lime', 15)) gain = gain.pow('1e1e5000')
+        if (hasUpgrade('lime', 16)) gain = gain.pow('1e1e1e1e50000')
         return softcap(gain, cap, power).div(10)
     },
     getNextAt(canMax) {
@@ -653,6 +663,8 @@ addLayer("chartreuse", {
         if (hasUpgrade('lime', 12)) gainExp = gainExp.times('1e6')
         if (hasUpgrade('lime', 13)) gainExp = gainExp.times('1e66')
         if (hasUpgrade('lime', 14)) gainExp = gainExp.times('1e5000')
+        if (hasUpgrade('lime', 15)) gainExp = gainExp.times('1e1e5000')
+        if (hasUpgrade('lime', 16)) gainExp = gainExp.times('1e1e1e1e50000')
         return gainExp
     },
     row: 4,
@@ -774,6 +786,8 @@ addLayer("lime", {
         if (hasUpgrade('lime', 12)) gain = gain.pow('1e6')
         if (hasUpgrade('lime', 13)) gain = gain.pow('1e66')
         if (hasUpgrade('lime', 14)) gain = gain.pow('1e5000')
+        if (hasUpgrade('lime', 15)) gain = gain.pow('1e1e5000')
+        if (hasUpgrade('lime', 16)) gain = gain.pow('1e1e1e1e50000')
         return gain.floor().sub(player.lime.points).add(1).max(1)
     },
     canBuyMax: true,
@@ -802,6 +816,18 @@ addLayer("lime", {
             description: "Points, red, orange, yellow, amber, chartreuse and lime gain are raised to the 10^5000th power (^1e5000), and orange gain is 10^308 (1e308) times higher.",
             cost: new Decimal('1e1e99'),
             unlocked() { return hasUpgrade(this.layer, 13) },
+        },
+        15: {
+            title: "Lime Transcendence",
+            description: "Points, red, orange, yellow, amber, chartreuse and lime gain are raised to the 10^(10^5000)th power (^1e1e5000).",
+            cost: new Decimal('1e1e10000'),
+            unlocked() { return hasUpgrade(this.layer, 14) },
+        },
+        16: {
+            title: "The Infinite Lime",
+            description: "Points, red, orange, yellow, amber, chartreuse and lime gain are raised to the 10^(10^(10^50000))th power (^1e1e1e1e50000).",
+            cost: new Decimal('1e1e1e15000'),
+            unlocked() { return hasUpgrade(this.layer, 15) },
         },
     },
 })
