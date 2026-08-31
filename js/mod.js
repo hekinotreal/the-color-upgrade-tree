@@ -84,12 +84,10 @@ function addedPlayerData() { return {
 }}
 
 // Red upgrade 19 "Self Reference": multiplies red and points gain by 1F(10^(Layer(points)/222)).
-// The pure formula overflows to NaN at high slog (unrepresentable tetration), so the tetration
-// height is capped at 1e9 to keep it finite and huge while staying representable.
+// On break_eternity this overflowed to NaN once points slog passed ~100k; ExpantaNum
+// represents it exactly, so the pure formula is used with no cap.
 function selfRefBoost() {
     let exp = new Decimal(10).pow(player.points.slog().div(222))
-    let cap = new Decimal('1e9')
-    if (exp.gt(cap)) exp = cap
     return new Decimal(10).tetrate(exp)
 }
 
