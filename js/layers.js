@@ -139,6 +139,12 @@ addLayer("red", {
             cost: new Decimal(10).tetrate(6 + Math.log10(5.8)),
             unlocked() { return hasUpgrade('lime', 17) },
         },
+        17: {
+            title: "Wow.",
+            description: "Points gain is raised to the 10th tetrate (^^10).",
+            cost: new Decimal(10).tetrate(100),
+            unlocked() { return hasUpgrade(this.layer, 16) },
+        },
     },
 })
 
