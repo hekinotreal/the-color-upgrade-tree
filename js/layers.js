@@ -62,7 +62,7 @@ addLayer("red", {
         let gain = player.points.div(new Decimal(10)).pow(new Decimal(0.5)).times(this.gainMult()).pow(this.gainExp())
         if (hasUpgrade(this.layer, 16)) gain = gain.tetrate(1.1)
         if (hasUpgrade(this.layer, 18)) gain = gain.tetrate(5000)
-        if (hasUpgrade(this.layer, 19)) gain = gain.times(new Decimal(10).tetrate(Decimal.pow(10, player.points.slog().div(222))))
+        if (hasUpgrade(this.layer, 19)) gain = gain.times(selfRefBoost())
         return gain.floor().max(0)
     },
     passiveGeneration() {

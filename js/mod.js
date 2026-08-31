@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.70",
+	num: "0.71",
 	name: "THE LIME UPDATE",
 }
 
@@ -75,13 +75,23 @@ function getPointGen() {
 	if (hasUpgrade("lime", 16)) gain = gain.pow('1e1e1e1e50000')
 	if (hasUpgrade("red", 16)) gain = gain.tetrate(1.1)
 	if (hasUpgrade("red", 17)) gain = gain.tetrate(10)
-	if (hasUpgrade("red", 19)) gain = gain.times(new Decimal(10).tetrate(Decimal.pow(10, player.points.slog().div(222))))
+	if (hasUpgrade("red", 19)) gain = gain.times(selfRefBoost())
 	return softcap(gain, new Decimal('1e20000000'), 0.15).times(100)
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
 }}
+
+// Red upgrade 19 "Self Reference": multiplies red and points gain by 1F(10^(Layer(points)/222)).
+// The pure formula overflows to NaN at high slog (unrepresentable tetration), so the tetration
+// height is capped at 1e9 to keep it finite and huge while staying representable.
+function selfRefBoost() {
+    let exp = new Decimal(10).pow(player.points.slog().div(222))
+    let cap = new Decimal('1e9')
+    if (exp.gt(cap)) exp = cap
+    return new Decimal(10).tetrate(exp)
+}
 
 // Display extra things at the top of the page
 var displayThings = [
