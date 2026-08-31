@@ -57,7 +57,15 @@
             if (this.eq(EN.POSITIVE_INFINITY)) return Number.POSITIVE_INFINITY
             if (this.eq(EN.NEGATIVE_INFINITY)) return Number.NEGATIVE_INFINITY
             var n = this.log10().toNumber()
-            return isFinite(n) ? n : Number.MAX_VALUE // huge-finite stays finite-readable
+            if (!isFinite(n)) {
+                // log10(0) = -Infinity -> mag(-Infinity) like break_eternity (small-number path).
+                // log10 of a huge finite value can overflow to +Infinity -> keep it a huge
+                // finite-readable number so format() doesn't mistake it for Infinity.
+                return n === Number.NEGATIVE_INFINITY
+                    ? Number.NEGATIVE_INFINITY
+                    : Number.MAX_VALUE
+            }
+            return n
         }
     })
 
