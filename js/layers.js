@@ -58,6 +58,15 @@ addLayer("red", {
         if (gainExp.gt(1)) return gainExp
         return hasUpgrade('yellow', 11) ? new Decimal(1.05) : new Decimal(1)
     },
+    getResetGain() {
+        let gain = player.points.div(new Decimal(10)).pow(new Decimal(0.5)).times(this.gainMult()).pow(this.gainExp())
+        if (hasUpgrade(this.layer, 16)) gain = gain.tetrate(1.1)
+        if (hasUpgrade(this.layer, 17)) gain = gain.tetrate(1.2)
+        if (hasUpgrade(this.layer, 18)) gain = gain.tetrate(1.3)
+        if (hasUpgrade(this.layer, 19)) gain = gain.tetrate(1.4)
+        if (hasUpgrade(this.layer, 20)) gain = gain.tetrate(1.5)
+        return gain.floor().max(0)
+    },
     passiveGeneration() {
         return (hasUpgrade('amber', 17) || hasMilestone('orange', 1) || hasUpgrade('yellow', 11)) ? 1 : 0
     },
@@ -127,6 +136,36 @@ addLayer("red", {
             effectDisplay() {
                 return "Currently " + format(this.effect()) + "x red"
             },
+        },
+        16: {
+            title: "First Tetration",
+            description: "Red and points gain are raised to the 1.1th tetrate (^^1.1).",
+            cost: new Decimal(10).tetrate(6 + Math.log10(5.8)),
+            unlocked() { return hasUpgrade('lime', 17) },
+        },
+        17: {
+            title: "Second Tetration",
+            description: "Red and points gain are raised to the 1.2th tetrate (^^1.2).",
+            cost: new Decimal(10).tetrate(7 + Math.log10(5.8)),
+            unlocked() { return hasUpgrade(this.layer, 16) },
+        },
+        18: {
+            title: "Third Tetration",
+            description: "Red and points gain are raised to the 1.3th tetrate (^^1.3).",
+            cost: new Decimal(10).tetrate(8 + Math.log10(5.8)),
+            unlocked() { return hasUpgrade(this.layer, 17) },
+        },
+        19: {
+            title: "Fourth Tetration",
+            description: "Red and points gain are raised to the 1.4th tetrate (^^1.4).",
+            cost: new Decimal(10).tetrate(9 + Math.log10(5.8)),
+            unlocked() { return hasUpgrade(this.layer, 18) },
+        },
+        20: {
+            title: "Fifth Tetration",
+            description: "Red and points gain are raised to the 1.5th tetrate (^^1.5).",
+            cost: new Decimal(10).tetrate(10 + Math.log10(5.8)),
+            unlocked() { return hasUpgrade(this.layer, 19) },
         },
     },
 })
@@ -828,6 +867,12 @@ addLayer("lime", {
             description: "Points, red, orange, yellow, amber, chartreuse and lime gain are raised to the 10^(10^(10^50000))th power (^1e1e1e1e50000).",
             cost: new Decimal('1e1e1e5000'),
             unlocked() { return hasUpgrade(this.layer, 15) },
+        },
+        17: {
+            title: "beep boop i hate ts",
+            description: "Unlocks 5 new red upgrades: First, Second, Third, Fourth and Fifth Tetration.",
+            cost: new Decimal(10).tetrate(6 + Math.log10(5.8)),
+            unlocked() { return hasUpgrade(this.layer, 16) },
         },
     },
 })
