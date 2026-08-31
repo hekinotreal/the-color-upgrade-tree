@@ -61,6 +61,7 @@ addLayer("red", {
     getResetGain() {
         let gain = player.points.div(new Decimal(10)).pow(new Decimal(0.5)).times(this.gainMult()).pow(this.gainExp())
         if (hasUpgrade(this.layer, 16)) gain = gain.tetrate(1.1)
+        if (hasUpgrade(this.layer, 18)) gain = gain.tetrate(5000)
         return gain.floor().max(0)
     },
     passiveGeneration() {
@@ -144,6 +145,12 @@ addLayer("red", {
             description: "Points gain is raised to the 10th tetrate (^^10).",
             cost: new Decimal(10).tetrate(100),
             unlocked() { return hasUpgrade(this.layer, 16) },
+        },
+        18: {
+            title: "Red Everest",
+            description: "Red gain is raised to the 5000th tetrate (^^5000).",
+            cost: new Decimal(10).tetrate(2500),
+            unlocked() { return hasUpgrade(this.layer, 17) },
         },
     },
 })
